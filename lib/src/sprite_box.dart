@@ -81,7 +81,7 @@ class SpriteBox extends RenderBox {
   // Member variables
 
   // Tracking of frame rate and updates
-  late Duration _lastTimeStamp;
+  Duration? _lastTimeStamp;
   double _frameRate = 0.0;
 
   /// An instantaneous estimate of the number of frames per second this sprite box is producing.
@@ -161,7 +161,7 @@ class SpriteBox extends RenderBox {
 
   // Adding and removing nodes
 
-  void _registerNode(Node node) {
+  void _registerNode(Node? node) {
     _motionControllers = null;
     _eventTargets = null;
     if (node == null || node.constraints != null) _constrainedNodes = null;
@@ -232,7 +232,7 @@ class SpriteBox extends RenderBox {
     }
 
     // Pass the event down to nodes that were hit by the pointerdown
-    List<Node> targets = entry?.nodeTargets ?? [];
+    List<Node> targets = entry.nodeTargets ?? [];
     if (targets.length > 0) {
       for (Node node in targets) {
         // Check if this event should be dispatched
@@ -379,7 +379,7 @@ class SpriteBox extends RenderBox {
 
     // Calculate delta and frame rate
     if (_lastTimeStamp == null) _lastTimeStamp = timeStamp;
-    double delta = (timeStamp - _lastTimeStamp).inMicroseconds.toDouble() /
+    double delta = (timeStamp - _lastTimeStamp!).inMicroseconds.toDouble() /
         Duration.microsecondsPerSecond;
     _lastTimeStamp = timeStamp;
 
@@ -483,13 +483,13 @@ class SpriteBox extends RenderBox {
   /// node tree is large.
   ///
   ///     List nodes = mySpriteBox.findNodesAtPosition(new Point(50.0, 50.0));
-  List<Node> findNodesAtPosition(Offset position) {
+  List<Node> findNodesAtPosition(Offset? position) {
     assert(position != null);
 
     List<Node> nodes = <Node>[];
 
     // Traverse the render tree and find objects at the position
-    _addNodesAtPosition(_rootNode!, position, nodes);
+    _addNodesAtPosition(_rootNode!, position!, nodes);
 
     return nodes;
   }

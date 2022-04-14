@@ -506,7 +506,6 @@ class MotionTween<T> extends MotionInterval {
 /// passed to the [MotionController]'s [run] method. The [MotionController]
 /// itself is typically a property of a [Node] and powered by the [SpriteBox].
 class MotionController {
-
   List<Motion> _motions = <Motion>[];
 
   /// Creates a new [MotionController]. However, for most uses a reference to
