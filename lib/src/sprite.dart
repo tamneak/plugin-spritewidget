@@ -13,7 +13,7 @@ class Sprite extends NodeWithSize with SpritePaint {
   /// marking the bounds of the sprite.
   ///
   ///     mySprite.texture = myTexture;
-  SpriteTexture texture;
+  SpriteTexture? texture;
 
   /// If true, constrains the proportions of the image by scaling it down, if its proportions doesn't match the [size].
   ///
@@ -29,8 +29,8 @@ class Sprite extends NodeWithSize with SpritePaint {
   ///     var mySprite = new Sprite(myTexture)
   Sprite([this.texture]) : super(Size.zero) {
     if (texture != null) {
-      size = texture.size;
-      pivot = texture.pivot;
+      size = texture!.size;
+      pivot = texture!.pivot;
     } else {
       pivot = new Offset(0.5, 0.5);
     }
@@ -39,12 +39,10 @@ class Sprite extends NodeWithSize with SpritePaint {
   /// Creates a new sprite from the provided [image].
   ///
   /// var mySprite = new Sprite.fromImage(myImage);
-  Sprite.fromImage(ui.Image image) : super(Size.zero) {
+  Sprite.fromImage(ui.Image? image) : super(Size.zero) {
     assert(image != null);
-
-    texture = new SpriteTexture(image);
-    size = texture.size;
-
+    texture = new SpriteTexture(image!);
+    size = texture!.size;
     pivot = new Offset(0.5, 0.5);
   }
 
@@ -54,21 +52,21 @@ class Sprite extends NodeWithSize with SpritePaint {
     applyTransformForPivot(canvas);
 
     if (texture != null) {
-      double w = texture.size.width;
-      double h = texture.size.height;
+      double w = texture!.size.width;
+      double h = texture!.size.height;
 
       if (w <= 0 || h <= 0) return;
 
-      double scaleX = size.width / w;
-      double scaleY = size.height / h;
+      double scaleX = size!.width / w;
+      double scaleY = size!.height / h;
 
       if (constrainProportions) {
         // Constrain proportions, using the smallest scale and by centering the image
         if (scaleX < scaleY) {
-          canvas.translate(0.0, (size.height - scaleX * h) / 2.0);
+          canvas.translate(0.0, (size!.height - scaleX * h) / 2.0);
           scaleY = scaleX;
         } else {
-          canvas.translate((size.width - scaleY * w) / 2.0, 0.0);
+          canvas.translate((size!.width - scaleY * w) / 2.0, 0.0);
           scaleX = scaleY;
         }
       }
@@ -79,13 +77,13 @@ class Sprite extends NodeWithSize with SpritePaint {
       _updatePaint(_cachedPaint);
 
       // Do actual drawing of the sprite
-      texture.drawTexture(canvas, Offset.zero, _cachedPaint);
+      texture!.drawTexture(canvas, Offset.zero, _cachedPaint);
 
       // Debug drawing
 //      canvas.drawRect(Offset.zero & texture.size, new Paint()..color=const Color(0x33ff0000));
     } else {
       // Paint a red square for missing texture
-      canvas.drawRect(new Rect.fromLTRB(0.0, 0.0, size.width, size.height),
+      canvas.drawRect(new Rect.fromLTRB(0.0, 0.0, size!.width, size!.height),
       new Paint()..color = new Color.fromARGB(255, 255, 0, 0));
     }
   }
@@ -101,33 +99,33 @@ abstract class SpritePaint {
   ///     mySprite.opacity = 0.5;
   double get opacity => _opacity;
 
-  set opacity(double opacity) {
+  set opacity(double? opacity) {
     assert(opacity != null);
-    assert(opacity >= 0.0 && opacity <= 1.0);
-    _opacity = opacity;
+    assert(opacity! >= 0.0 && opacity <= 1.0);
+    _opacity = opacity!;
   }
 
   /// The color to draw on top of the sprite, null if no color overlay is used.
   ///
   ///     // Color the sprite red
   ///     mySprite.colorOverlay = new Color(0x77ff0000);
-  Color colorOverlay;
+  Color? colorOverlay;
 
   /// The transfer mode used when drawing the sprite to screen.
   ///
   ///     // Add the colors of the sprite with the colors of the background
   ///     mySprite.transferMode = TransferMode.plusMode;
-  BlendMode transferMode;
+  BlendMode? transferMode;
 
   void _updatePaint(Paint paint) {
     paint.color = new Color.fromARGB((255.0*_opacity).toInt(), 255, 255, 255);
 
     if (colorOverlay != null) {
-      paint.colorFilter = new ColorFilter.mode(colorOverlay, BlendMode.srcATop);
+      paint.colorFilter = new ColorFilter.mode(colorOverlay!, BlendMode.srcATop);
     }
 
     if (transferMode != null) {
-      paint.blendMode = transferMode;
+      paint.blendMode = transferMode!;
     }
   }
 }

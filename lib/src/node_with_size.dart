@@ -12,13 +12,13 @@ class NodeWithSize extends Node {
   /// Changing the size will affect the size of the rendering of the node.
   ///
   ///     myNode.size = new Size(1024.0, 1024.0);
-  Size size;
+  Size? size;
 
   /// The normalized point which the node is transformed around.
   ///
   ///     // Position myNode from is middle top
   ///     myNode.pivot = new Point(0.5, 0.0);
-  Offset pivot;
+  late Offset pivot;
 
   /// Creates a new NodeWithSize.
   ///
@@ -47,20 +47,23 @@ class NodeWithSize extends Node {
   ///     }
   void applyTransformForPivot(Canvas canvas) {
     if (pivot.dx != 0 || pivot.dy != 0) {
-      double pivotInPointsX = size.width * pivot.dx;
-      double pivotInPointsY = size.height * pivot.dy;
+      double pivotInPointsX = size!.width * pivot.dx;
+      double pivotInPointsY = size!.height * pivot.dy;
       canvas.translate(-pivotInPointsX, -pivotInPointsY);
     }
   }
 
   @override
-  bool isPointInside (Offset nodePoint) {
+  bool isPointInside (Offset? nodePoint) {
+    if(nodePoint!=null){
+      double minX = -size!.width * pivot.dx;
+      double minY = -size!.height * pivot.dy;
+      double maxX = minX + size!.width;
+      double maxY = minY + size!.height;
+      return (nodePoint.dx >= minX && nodePoint.dx < maxX &&
+          nodePoint.dy >= minY && nodePoint.dy < maxY);
+    }
+    return false;
 
-    double minX = -size.width * pivot.dx;
-    double minY = -size.height * pivot.dy;
-    double maxX = minX + size.width;
-    double maxY = minY + size.height;
-    return (nodePoint.dx >= minX && nodePoint.dx < maxX &&
-            nodePoint.dy >= minY && nodePoint.dy < maxY);
   }
 }

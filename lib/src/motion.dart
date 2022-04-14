@@ -23,7 +23,7 @@ abstract class Action {
 /// [MotionInterval] or [MotionInstant] if you need to create a new action
 /// class.
 abstract class Motion {
-  Object _tag;
+  late Object _tag;
   bool _finished = false;
   bool _added = false;
 
@@ -65,7 +65,7 @@ abstract class MotionInterval extends Motion {
   /// The animation curve used to ease the animation.
   ///
   ///     myMotion.curve = bounceOut;
-  Curve curve;
+  Curve? curve;
 
   bool _firstTick = true;
   double _elapsed = 0.0;
@@ -88,7 +88,7 @@ abstract class MotionInterval extends Motion {
     if (curve == null) {
       update(t);
     } else {
-      update(curve.transform(t));
+      update(curve!.transform(t));
     }
 
     if (t >= 1.0) _finished = true;
@@ -169,9 +169,9 @@ class MotionRepeatForever extends Motion {
 /// of the [MotionSequence] with be the sum of the durations of the motions
 /// passed in to the constructor.
 class MotionSequence extends MotionInterval {
-  Motion _a;
-  Motion _b;
-  double _split;
+  late Motion _a;
+  late Motion _b;
+  late double _split;
 
   /// Creates a new motion with the list of motions passed in.
   ///
@@ -231,7 +231,7 @@ class MotionSequence extends MotionInterval {
       if (motionInterval.curve == null) {
         motion.update(t);
       } else {
-        motion.update(motionInterval.curve.transform(t));
+        motion.update(motionInterval.curve!.transform(t));
       }
     } else {
       motion.update(t);
@@ -299,7 +299,7 @@ class MotionGroup extends MotionInterval {
               if (motionInterval.curve == null) {
                 motion.update(ta);
               } else {
-                motion.update(motionInterval.curve.transform(ta));
+                motion.update(motionInterval.curve!.transform(ta));
               }
             } else {
               motion.update(ta);
@@ -398,7 +398,7 @@ class MotionTween<T> extends MotionInterval {
   ///       bounceOut
   ///     );
   ///     myNode.motions.run(myTween);
-  MotionTween(this.setter, this.startVal, this.endVal, double duration, [Curve curve]) : super(duration, curve) {
+  MotionTween(this.setter, this.startVal, this.endVal, double duration, [Curve? curve]) : super(duration, curve) {
     _computeDelta();
   }
 
@@ -488,11 +488,11 @@ class MotionTween<T> extends MotionInterval {
       newVal = (startVal as double) + _delta * t;
     } else if (startVal is Color) {
       // Colors
-      int aNew = ((startVal as Color).alpha + (_delta.alpha * t).toInt()).clamp(0, 255);
-      int rNew = ((startVal as Color).red + (_delta.red * t).toInt()).clamp(0, 255);
-      int gNew = ((startVal as Color).green + (_delta.green * t).toInt()).clamp(0, 255);
-      int bNew = ((startVal as Color).blue + (_delta.blue * t).toInt()).clamp(0, 255);
-      newVal = new Color.fromARGB(aNew, rNew, gNew, bNew);
+      num aNew = ((startVal as Color).alpha + (_delta.alpha * t).toInt()).clamp(0, 255);
+      num rNew = ((startVal as Color).red + (_delta.red * t).toInt()).clamp(0, 255);
+      num gNew = ((startVal as Color).green + (_delta.green * t).toInt()).clamp(0, 255);
+      num bNew = ((startVal as Color).blue + (_delta.blue * t).toInt()).clamp(0, 255);
+      newVal = new Color.fromARGB(aNew.toInt(), rNew.toInt(), gNew.toInt(), bNew.toInt());
     } else {
       // Oopses
       assert(false);
@@ -517,13 +517,15 @@ class MotionController {
   /// to reference the motion or a set of motions with the same tag.
   ///
   ///     myNode.motions.run(myMotion, "myMotionGroup");
-  void run(Motion motion, [Object tag]) {
+  void run(Motion motion, {Object? tag}) {
     assert(!motion._added);
+    if(tag!=null){
+      motion._tag = tag;
+      motion._added = true;
+      motion.update(0.0);
+      _motions.add(motion);
+    }
 
-    motion._tag = tag;
-    motion._added = true;
-    motion.update(0.0);
-    _motions.add(motion);
   }
 
   /// Stops an [Motion] and removes it from the controller.

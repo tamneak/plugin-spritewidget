@@ -12,20 +12,19 @@ part of spritewidget;
 /// the sprite sheet definition are used to reference the different textures.
 class SpriteSheet {
 
-  ui.Image _image;
+  ui.Image? _image;
   Map<String, SpriteTexture> _textures = new Map<String, SpriteTexture>();
   Map<String, SpriteTexture> get textures => _textures;
 
   /// Creates a new sprite sheet from an [_image] and a sprite sheet [jsonDefinition].
   ///
   ///     var mySpriteSheet = new SpriteSheet(myImage, jsonString);
-  SpriteSheet(this._image, String jsonDefinition) {
+  SpriteSheet(this._image, String? jsonDefinition) {
     assert(_image != null);
     assert(jsonDefinition != null);
 
     JsonDecoder decoder = new JsonDecoder();
-    Map<dynamic, dynamic> file = decoder.convert(jsonDefinition);
-    assert(file != null);
+    Map<dynamic, dynamic> file = decoder.convert(jsonDefinition!);
 
     List<dynamic> frames = file["frames"];
 
@@ -38,7 +37,7 @@ class SpriteSheet {
       Size sourceSize = _readJsonSize(frameInfo["sourceSize"]);
       Offset pivot = _readJsonPoint(frameInfo["pivot"]);
 
-      SpriteTexture texture = new SpriteTexture._fromSpriteFrame(_image, fileName, sourceSize, rotated, trimmed, frame,
+      SpriteTexture texture = new SpriteTexture._fromSpriteFrame(_image!, fileName, sourceSize, rotated, trimmed, frame,
         spriteSourceSize, pivot);
       _textures[fileName] = texture;
     }
@@ -70,10 +69,10 @@ class SpriteSheet {
   /// The image used by the sprite sheet.
   ///
   ///     var spriteSheetImage = mySpriteSheet.image;
-  ui.Image get image => _image;
+  ui.Image? get image => _image;
 
   /// Returns a texture by its name.
   ///
   ///     var myTexture = mySpriteSheet["example.png"];
-  SpriteTexture operator [](String fileName) => _textures[fileName];
+  SpriteTexture? operator [](String fileName) => _textures[fileName];
 }

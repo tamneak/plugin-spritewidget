@@ -11,13 +11,13 @@ class NineSliceSprite extends NodeWithSize with SpritePaint {
 
   /// Creates a new NineSliceSprite from the privided [texture], [size], and
   /// texture [insets].
-  NineSliceSprite(SpriteTexture texture, Size size, EdgeInsets insets) : super(size) {
+  NineSliceSprite(SpriteTexture? texture,Size? size, EdgeInsets? insets) : super(size) {
     assert(texture != null && !texture.rotated);
     assert(size != null);
     assert(insets != null);
     pivot = const Offset(0.5, 0.5);
-    this.texture = texture;
-    this.insets = insets;
+    this.texture = texture!;
+    this.insets = insets!;
   }
 
   /// Creates a new NineSliceSprite from the provided [image], [size], and
@@ -28,11 +28,11 @@ class NineSliceSprite extends NodeWithSize with SpritePaint {
   /// The texture that the sprite will render to screen. Cannot be null.
   ///
   ///     my9Sprite.texture = myTexture;
-  SpriteTexture get texture => _texture;
+  SpriteTexture? get texture => _texture;
 
-  SpriteTexture _texture;
+  late SpriteTexture? _texture;
 
-  set texture(SpriteTexture texture) {
+  set texture(SpriteTexture? texture) {
     _texture = texture;
     _isDirty = true;
     if (texture == null) {
@@ -51,11 +51,11 @@ class NineSliceSprite extends NodeWithSize with SpritePaint {
   /// areas of the texture that will not be deformed as the sprite stretches.
   EdgeInsets get insets => _insets;
 
-  EdgeInsets _insets;
+  late EdgeInsets _insets;
 
-  set insets(EdgeInsets insets) {
+  set insets(EdgeInsets? insets) {
     assert(insets != null);
-    _insets = insets;
+    _insets = insets!;
     _isDirty = true;
   }
 
@@ -71,7 +71,7 @@ class NineSliceSprite extends NodeWithSize with SpritePaint {
   }
 
   @override
-  set size(Size size) {
+  set size(Size? size) {
     super.size = size;
     _isDirty = true;
   }
@@ -82,10 +82,10 @@ class NineSliceSprite extends NodeWithSize with SpritePaint {
 
   // Cached values.
   bool _isDirty = true;
-  List<Offset> _vertices;
-  List<Offset> _textureCoordinates;
-  List<Color> _colors;
-  List<int> _indices;
+  late List<Offset> _vertices;
+  late List<Offset> _textureCoordinates;
+  late List<Color> _colors;
+  late List<int> _indices;
 
   @override
   void paint(Canvas canvas) {
@@ -102,55 +102,55 @@ class NineSliceSprite extends NodeWithSize with SpritePaint {
       ];
 
       // Texture width and height.
-      double tw = texture.frame.width;
-      double th = texture.frame.height;
+      double tw = texture!.frame.width;
+      double th = texture!.frame.height;
       _textureCoordinates = <Offset>[];
       _vertices = <Offset>[];
       _colors = <Color>[];
 
       for (int y = 0; y < 4; y += 1) {
-        double vy;
-        double ty;
+        late double vy;
+        late double ty;
 
         switch(y) {
           case 0:
             vy = 0.0;
-            ty = texture.frame.top;
+            ty = texture!.frame.top;
             break;
           case 1:
             vy = insets.top * th;
-            ty = texture.frame.top + insets.top * th;
+            ty = texture!.frame.top + insets.top * th;
             break;
           case 2:
-            vy = size.height - insets.bottom * th;
-            ty = texture.frame.bottom - insets.bottom * th;
+            vy = size!.height - insets.bottom * th;
+            ty = texture!.frame.bottom - insets.bottom * th;
             break;
           case 3:
-            vy = size.height;
-            ty = texture.frame.bottom;
+            vy = size!.height;
+            ty = texture!.frame.bottom;
             break;
         }
 
         for (int x = 0; x < 4; x += 1) {
-          double vx;
-          double tx;
+          late double vx;
+          late double tx;
 
           switch(x) {
             case 0:
               vx = 0.0;
-              tx = texture.frame.left;
+              tx = texture!.frame.left;
               break;
             case 1:
               vx = insets.left * tw;
-              tx = texture.frame.left + insets.left * tw;
+              tx = texture!.frame.left + insets.left * tw;
               break;
             case 2:
-              vx = size.width - insets.right * tw;
-              tx = texture.frame.right - insets.right * tw;
+              vx = size!.width - insets.right * tw;
+              tx = texture!.frame.right - insets.right * tw;
               break;
             case 3:
-              vx = size.width;
-              tx = texture.frame.right;
+              vx = size!.width;
+              tx = texture!.frame.right;
               break;
           }
 

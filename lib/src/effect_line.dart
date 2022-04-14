@@ -38,9 +38,9 @@ class EffectLine extends Node {
   /// Creates a new EffectLine with the specified parameters. Only the
   /// [texture] parameter is required, all other parameters are optional.
   EffectLine({
-    this.texture,
+    required this.texture,
     this.transferMode: BlendMode.dstOver,
-    List<Offset> points,
+    List<Offset>? points,
     this.widthMode : EffectLineWidthMode.linear,
     this.minWidth: 10.0,
     this.maxWidth: 10.0,
@@ -48,11 +48,11 @@ class EffectLine extends Node {
     this.animationMode: EffectLineAnimationMode.none,
     this.scrollSpeed: 0.1,
     double scrollStart: 0.0,
-    this.fadeDuration,
-    this.fadeAfterDelay,
-    this.textureLoopLength,
+    required this.fadeDuration,
+    required this.fadeAfterDelay,
+    required this.textureLoopLength,
     this.simplify: true,
-    ColorSequence colorSequence
+    required ColorSequence colorSequence
   }) {
     if (points == null)
       this.points = <Offset>[];
@@ -69,8 +69,8 @@ class EffectLine extends Node {
 
     _offset = scrollStart;
 
-    _painter = new TexturedLinePainter(points, _colors, _widths, texture);
-    _painter.textureLoopLength = textureLoopLength;
+    _painter = new TexturedLinePainter(points!,_colors, _widths, texture: texture);
+    _painter.textureLoopLength = textureLoopLength!;
   }
 
   /// The texture used to draw the line.
@@ -101,9 +101,9 @@ class EffectLine extends Node {
   final double scrollSpeed;
 
   /// Color gradient used to draw the line, from start to finish.
-  ColorSequence get colorSequence => _colorSequence;
+  ColorSequence? get colorSequence => _colorSequence;
 
-  ColorSequence _colorSequence;
+  ColorSequence? _colorSequence;
 
   /// List of points that make up the line. Typically, you will only want to
   /// set this at the beginning. Then use [addPoint] to add additional points
@@ -118,29 +118,29 @@ class EffectLine extends Node {
     }
   }
 
-  List<Offset> _points;
+  late List<Offset> _points;
 
-  List<double> _pointAges;
-  List<Color> _colors;
-  List<double> _widths;
+  late  List<double> _pointAges;
+  late List<Color> _colors;
+  late List<double> _widths;
 
   /// The time it takes for an added point to fade out. It's total life time is
   /// [fadeDuration] + [fadeAfterDelay].
-  final double fadeDuration;
+  final double? fadeDuration;
 
   /// The time it takes until an added point starts to fade out.
-  final double fadeAfterDelay;
+  final double? fadeAfterDelay;
 
   /// The length, in points, that the texture is stretched to. If the
   /// textureLoopLength is shorter than the line, the texture will be looped.
-  final double textureLoopLength;
+  final double? textureLoopLength;
 
   /// True if the line should be simplified by removing points that are close
   /// to other points. This makes drawing faster, but can result in a slight
   /// jittering effect when points are added.
   final bool simplify;
 
-  TexturedLinePainter _painter;
+  late TexturedLinePainter _painter;
   double _offset = 0.0;
 
   @override
@@ -161,11 +161,11 @@ class EffectLine extends Node {
       }
 
       // Check if the first/oldest point should be removed
-      while(_points.length > 0 && _pointAges[0] > (fadeDuration + fadeAfterDelay)) {
+      while(_points.length > 0 && _pointAges[0] > (fadeDuration! + fadeAfterDelay!)) {
         // Update scroll if it isn't the last and only point that is about to removed
         if (_points.length > 1 && textureLoopLength != null) {
           double dist = GameMath.distanceBetweenPoints(_points[0], _points[1]);
-          _offset = (_offset - (dist / textureLoopLength)) % 1.0;
+          _offset = (_offset - (dist / textureLoopLength!)) % 1.0;
           if (_offset < 0.0) _offset += 1;
         }
 
@@ -183,17 +183,17 @@ class EffectLine extends Node {
     _painter.points = points;
 
     // Calculate colors
-    List<double> stops = _painter.calculatedTextureStops;
+    List<double> stops = _painter.calculatedTextureStops!;
 
     List<Color> colors = <Color>[];
     for (int i = 0; i < stops.length; i++) {
       double stop = stops[i];
-      Color color = _colorSequence.colorAtPosition(stop);
+      Color color = _colorSequence!.colorAtPosition(stop);
 
       if (fadeDuration != null && fadeAfterDelay != null) {
         double age = _pointAges[i];
-        if (age > fadeAfterDelay) {
-          double fade = 1.0 - (age - fadeAfterDelay) / fadeDuration;
+        if (age > fadeAfterDelay!) {
+          double fade = 1.0 - (age - fadeAfterDelay!) / fadeDuration!;
           int alpha = (color.alpha * fade).toInt().clamp(0, 255);
           color = new Color.fromARGB(alpha, color.red, color.green, color.blue);
         }

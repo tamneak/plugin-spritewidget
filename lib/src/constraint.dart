@@ -25,7 +25,7 @@ abstract class Constraint {
   void constrain(Node node, double dt);
 }
 
-double _dampenRotation(double src, double dst, double dampening) {
+double _dampenRotation(double src, double dst, double? dampening) {
   if (dampening == null)
     return dst;
 
@@ -41,7 +41,7 @@ double _dampenRotation(double src, double dst, double dampening) {
 class ConstraintRotationToMovement extends Constraint {
   /// Creates a new constraint the aligns a nodes rotation to its movement
   /// vector. A [baseRotation] and [dampening] can optionally be set.
-  ConstraintRotationToMovement({this.baseRotation: 0.0, this.dampening});
+  ConstraintRotationToMovement({this.baseRotation: 0.0, required this.dampening});
 
   /// The filter factor used when constraining the rotation of the node. Valid
   /// values are in the range 0.0 to 1.0
@@ -50,7 +50,7 @@ class ConstraintRotationToMovement extends Constraint {
   /// The base rotation will be added to a the movement vectors rotation.
   final double baseRotation;
 
-  Offset _lastPosition;
+  Offset? _lastPosition;
 
   @override
   void preUpdate(Node node, double dt) {
@@ -63,7 +63,7 @@ class ConstraintRotationToMovement extends Constraint {
     if (_lastPosition == node.position) return;
 
     // Get the target angle
-    Offset offset = node.position - _lastPosition;
+    Offset offset = node.position - _lastPosition!;
     double target = degrees(GameMath.atan2(offset.dy, offset.dx)) + baseRotation;
 
     node.rotation = _dampenRotation(node.rotation, target, dampening);
@@ -74,7 +74,7 @@ class ConstraintRotationToMovement extends Constraint {
 class ConstraintRotationToNodeRotation extends Constraint {
   /// Creates a new constraint that copies a node's rotation, optionally
   /// with a [baseRotation] added and using [dampening].
-  ConstraintRotationToNodeRotation(this.targetNode, { this.baseRotation: 0.0, this.dampening });
+  ConstraintRotationToNodeRotation(this.targetNode, { this.baseRotation: 0.0,required this.dampening });
 
   /// The node to copy the rotation from
   final Node targetNode;
@@ -100,7 +100,7 @@ class ConstraintRotationToNode extends Constraint {
   /// Creates a new [Constraint] that rotates the node towards the [targetNode].
   /// The [baseRotation] will be added to the nodes rotation, and [dampening]
   /// can be used to ease the rotation.
-  ConstraintRotationToNode(this.targetNode, {this.baseRotation: 0.0, this.dampening});
+  ConstraintRotationToNode(this.targetNode, {this.baseRotation: 0.0,required this.dampening});
 
   /// The node to rotate towards.
   final Node targetNode;
@@ -141,16 +141,16 @@ class ConstraintPositionToNode extends Constraint {
   /// equal to the position of the [targetNode]. Optionally an [offset] can
   /// be used and also [dampening]. The targetNode doesn't need to have the
   /// same parent, but they need to be added to the same [SpriteBox].
-  ConstraintPositionToNode(this.targetNode, {this.dampening, this.offset: Offset.zero});
+  ConstraintPositionToNode(this.targetNode, {required this.dampening, this.offset: Offset.zero});
 
   /// Target node to follow.
   final Node targetNode;
 
   /// Offset to the target node.
-  final Offset offset;
+  final Offset? offset;
 
   /// Dampening used when following the [targetNode], value between 0.0 and 1.0.
-  final double dampening;
+  final double? dampening;
 
   @override
   void constrain(Node node, double dt) {
@@ -164,15 +164,15 @@ class ConstraintPositionToNode extends Constraint {
     if (targetNode.parent == node.parent) {
       targetPosition = targetNode.position;
     } else {
-      targetPosition = node.parent.convertPointFromNode(Offset.zero, targetNode);
+      targetPosition = node.parent!.convertPointFromNode(Offset.zero, targetNode);
     }
 
     if (offset != null)
-      targetPosition += offset;
+      targetPosition += offset!;
 
     if (dampening == null)
       node.position = targetPosition;
     else
-      node.position = GameMath.filterPoint(node.position, targetPosition, dampening);
+      node.position = GameMath.filterPoint(node.position, targetPosition, dampening!);
   }
 }

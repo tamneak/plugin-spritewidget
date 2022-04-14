@@ -13,7 +13,7 @@ class VirtualJoystick extends NodeWithSize {
     handleMultiplePointers = false;
     position = new Offset(160.0, -20.0);
     pivot = new Offset(0.5, 1.0);
-    _center = new Offset(size.width / 2.0, size.height / 2.0);
+    _center = new Offset(size!.width / 2.0, size!.height / 2.0);
     _handlePos = _center;
 
     _paintHandle = new Paint()
@@ -34,28 +34,28 @@ class VirtualJoystick extends NodeWithSize {
   bool _isDown = false;
 
 
-  Offset _pointerDownAt;
-  Offset _center;
-  Offset _handlePos;
+  Offset? _pointerDownAt;
+  late Offset _center;
+  late Offset _handlePos;
 
-  Paint _paintHandle;
-  Paint _paintControl;
+  late Paint _paintHandle;
+  late Paint _paintControl;
 
   @override
   bool handleEvent(SpriteBoxEvent event) {
     if (event.type == PointerDownEvent) {
       _pointerDownAt = event.boxPosition;
-      motions.stopAll();
+      motions?.stopAll();
       _isDown = true;
     }
     else if (event.type == PointerUpEvent || event.type == PointerCancelEvent) {
       _pointerDownAt = null;
       _value = Offset.zero;
       MotionTween moveToCenter = new MotionTween((a) { _handlePos = a; }, _handlePos, _center, 0.4, Curves.elasticOut);
-      motions.run(moveToCenter);
+      motions?.run(moveToCenter);
       _isDown = false;
     } else if (event.type == PointerMoveEvent) {
-      Offset movedDist = event.boxPosition - _pointerDownAt;
+      Offset movedDist = event.boxPosition - _pointerDownAt!;
 
       _value = new Offset(
         (movedDist.dx / 80.0).clamp(-1.0, 1.0),

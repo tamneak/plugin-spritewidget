@@ -38,7 +38,7 @@ class SpriteTexture {
   /// The name of the image acts as a tag when acquiring a reference to it.
   ///
   ///     myTexture.name = "new_texture_name";
-  String name;
+ late String name;
 
   /// The texture was rotated 90 degrees when being packed into a sprite sheet.
   ///
@@ -70,12 +70,12 @@ class SpriteTexture {
   Offset pivot;
 
   /// Creates a new Texture from a part of the current texture.
-  SpriteTexture textureFromRect(Rect rect, [String name]) {
+  SpriteTexture textureFromRect(Rect? rect, [String? name]) {
     assert(rect != null);
     assert(!rotated);
-    Rect srcFrame = new Rect.fromLTWH(rect.left + frame.left, rect.top + frame.top, rect.size.width, rect.size.height);
+    Rect srcFrame = new Rect.fromLTWH(rect!.left + frame.left, rect.top + frame.top, rect.size.width, rect.size.height);
     Rect dstFrame = new Rect.fromLTWH(0.0, 0.0, rect.size.width, rect.size.height);
-    return new SpriteTexture._fromSpriteFrame(image, name, rect.size, false, false, srcFrame, dstFrame, new Offset(0.5, 0.5));
+    return new SpriteTexture._fromSpriteFrame(image, name!, rect.size, false, false, srcFrame, dstFrame, new Offset(0.5, 0.5));
   }
 
   /// Draws the texture to a [Canvas] at a specified [position] and with the
