@@ -520,10 +520,10 @@ class MotionController {
     assert(!motion._added);
     if(tag!=null){
       motion._tag = tag;
-      motion._added = true;
-      motion.update(0.0);
-      _motions.add(motion);
     }
+    motion._added = true;
+    motion.update(0.0);
+    _motions.add(motion);
 
   }
 

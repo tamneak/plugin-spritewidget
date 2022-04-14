@@ -41,7 +41,8 @@ class SpriteBox extends RenderBox {
   /// use a [SpriteWidget] that automatically wraps the SpriteBox.
   ///
   ///     var spriteBox = new SpriteBox(myNode, SpriteBoxTransformMode.fixedHeight);
-  SpriteBox(NodeWithSize? rootNode,
+  SpriteBox(
+      NodeWithSize? rootNode,
       [SpriteBoxTransformMode mode = SpriteBoxTransformMode.letterbox]) {
     assert(rootNode != null);
 
@@ -88,7 +89,7 @@ class SpriteBox extends RenderBox {
   double get frameRate => _frameRate;
 
   // Transformation mode
-  late SpriteBoxTransformMode _transformMode;
+  SpriteBoxTransformMode _transformMode = SpriteBoxTransformMode.letterbox;
 
   set transformMode(SpriteBoxTransformMode value) {
     if (value == _transformMode) return;
